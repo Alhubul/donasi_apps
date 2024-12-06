@@ -2,75 +2,54 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\DonorResource\Pages;
-use App\Filament\Resources\DonorResource\RelationManagers;
-use App\Models\Donor;
-use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Resources\Form;
+use Filament\Resources\Table;
+use Filament\Forms;
 use Filament\Tables;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Columns\TextColumn;
+use App\Filament\Resources\DonorResource\Pages;
 
 class DonorResource extends Resource
 {
-    protected static ?string $model = Donor::class;
+    // Tidak menggunakan model karena menggunakan API
+    protected static ?string $model = null;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user';
 
-    public static function form(Form $form): Form
+    public static function form(Forms\Form $form): Forms\Form
     {
         return $form
             ->schema([
-                TextInput::make('name'),
-                //brand
-                TextInput::make('email'),
-                //category
-                TextInput::make('phone_number')
-                    ->numeric(),
-                TextInput::make('address'),
- 
+                Forms\Components\TextInput::make('name')->required(),
+                Forms\Components\TextInput::make('email')->email()->required(),
+                Forms\Components\TextInput::make('phone_number')->required(),
+                Forms\Components\Textarea::make('address')->required(),
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
-            ->columns([
-                TextColumn::make('name')
-                    ->searchable()
-                    ->sortable()
-                    ->alignLeft(),
-                TextColumn::make('email')
-                    ->searchable()
-                    ->sortable()
-                    ->alignLeft(),
-                TextColumn::make('phone_number')
-                    ->searchable()
-                    ->sortable()
-                    ->alignLeft(),
-                TextColumn::make('address')
-                    ->searchable()
-                    ->sortable()
-                    ->alignLeft(),
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+        ->columns([
+            Tables\Columns\TextColumn::make('id')->label('ID'),
+            Tables\Columns\TextColumn::make('name')->label('Name'),
+            Tables\Columns\TextColumn::make('email')->label('Email'),
+            Tables\Columns\TextColumn::make('phone_number')->label('Phone Number'),
+            Tables\Columns\TextColumn::make('address')->label('Address'),
+        ])
+        ->filters([])
+        ->actions([
+            Tables\Actions\EditAction::make(),
+            Tables\Actions\DeleteAction::make(),
+        ])
+        ->bulkActions([
+            Tables\Actions\DeleteBulkAction::make(),
+        ])
+        ->headerActions([
+            Tables\Actions\CreateAction::make(), // Tambahkan ini untuk tombol Create
+        ]);
     }
+
 
     public static function getPages(): array
     {
